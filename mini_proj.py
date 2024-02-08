@@ -152,7 +152,7 @@ async def read_root():
             </div>
         </div>
         <div class="result">
-            <div class="result_box" style="margin-top:45px">
+            <div class="result_box" style="margin-top: 45px;">
             <div class="title">
             <h2>분석 결과</h2>
           </div>
@@ -169,51 +169,48 @@ async def read_root():
     </div>
     </div>
     </div>
-    <script>
-function analyzeNews() {
-    var newsArticle = document.getElementById("news-article").value;
+<script>
+    function analyzeNews() {
+        var newsArticle = document.getElementById("news-article").value;
 
-    fetch('/analyze_news', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ news_article: newsArticle })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Failed to fetch data from server');
-        }
-        return response.json();
-    })
-    .then(data => {
-        document.getElementById("summary-text").innerText = data.summarized_article;
-
-        var score = 0.00000;
-        var label = "";
-
-        for (var i = 0; i < 3; i++) {
-            if (data.sentiment_results[0][i]['label'] != 'neutral') {
-                label = data.sentiment_results[0][i]['label'];
-                console.log(label)
-                
-                
-                if (data.sentiment_results[0][i]['score'] > score) {
-                    score = data.sentiment_results[0][i]['score'];
-                    console.log(score)
-                    }
+        fetch('/analyze_news', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ news_article: newsArticle })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch data from server');
             }
-            console.log(data.sentiment_results[0])
-        }
-        document.getElementById("result-text").innerText = label;
-           
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-}
+            return response.json();
+        })
+        .then(data => {
+            document.getElementById("summary-text").innerText = data.summarized_article;
 
-    </script>
+            var score = 0.00000;
+            var label = "";
+
+            console.log("Sentiment Results:", data.sentiment_results);
+
+            data.sentiment_results[0].forEach(result => {
+                if (result['score'] > score) {
+                    score = result['score'];
+                    label = result['label'];
+                }
+            });
+
+            console.log("Label:", label);
+            console.log("Score:", score);
+
+            document.getElementById("result-text").innerText = label;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+</script>
 </body>
 </html>
     """
